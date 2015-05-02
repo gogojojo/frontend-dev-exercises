@@ -35,3 +35,22 @@
       }
     }
 */
+$(function(){
+  var list = ['one','two','three','four']
+  $('#searchsub').click(function(){
+    var blah = $('#search').val();
+    console.log(blah)
+     $.ajax({
+      url: "https://api.github.com/repos/gogojojo/"+blah, 
+      success: function(result){
+        for (var i = 0; i < list.length; i ++) {
+          $("#results").append("<li>"+list[i]+"</li>");
+        }
+        console.log(result.owner.login)
+      },
+      error: function(result){
+        $("#div1").html('does not exist')
+      }
+    });
+  })
+})
