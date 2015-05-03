@@ -1,80 +1,66 @@
-/*
-    # Endpoint URL #
-    
-    https://api.github.com/legacy/repos/search/{query}
-    
-    Note: Github imposes a rate limit of 60 request per minute. Documentation can be found at http://developer.github.com/v3/.
-    
-    # Example Response JSON #
-    
-    {
-      "meta": {...},
-      "data": {
-        "repositories": [
-          {
-            "type": string,
-            "watchers": number,
-            "followers": number,
-            "username": string,
-            "owner": string,
-            "created": string,
-            "created_at": string,
-            "pushed_at": string,
-            "description": string,
-            "forks": number,
-            "pushed": string,
-            "fork": boolean,
-            "size": number,
-            "name": string,
-            "private": boolean,
-            "language": number
-          },
-          {...},
-          {...}
-        ]
-      }
-    }
-*/
-var searchHistory = {}
-var blah
+var searchHistory = {};
 
 $(function(){
+  // do not retreive data if this is your first search 
+  // local storage is used for caching
+  if (localStorage.getItem('localCache') !== null ) {
+    searchHistory = localStorage.getItem('localCache');
+    searchHistory = JSON.parse(searchHistory);
+  }
+
   $('#searchsub').click(function(){
-    searchTerm = $('#search').val();
-    // if the search term has already been searched for
+    var searchTerm = $('#search').val();
+    //if the search term has already been searched for then no need for ajax call
     if (Object.keys(searchHistory).indexOf(searchTerm) != -1) {
-      console.log('searched already')
+      var searchResults = searchHistory[searchTerm].items;
+      // clear out all list items in ul
+      $('#results').empty();
+          // if the search term doesnt return any results
+      if (searchResults.length === 0) {
+        $('#results').append("<li> does not match any repositories </li>");
+      } else {
+        for (var i = 0; i < searchResults.length; i ++) {
+          $('#results').append(
+            "<li class='result'> <h1> Name:"+searchResults[i].name+" Owner:"+searchResults[i].owner.login+"</h1>"
+            +"<h2>"+searchResults[i].description+" "+searchResults[i].url+"</h2> </li>"
+          );
+        }
+      }
 
     } else {
       $.ajax({
-        url: "https://api.github.com/legacy/repos/search/"+searchTerm, 
+        // note: not using legacy seach because github api suggests using un depreciated version
+        // Returning the top 25 repositories based on stars
+        url: "https://api.github.com/search/repositories?q="+searchTerm+"&sort=stars&per_page=25",
         success: function(result){
-          searchHistory[searchTerm] = result
-          var searchResults = searchHistory[searchTerm].repositories
+          searchHistory[searchTerm] = result;
+          // storing search history object into local storage
+          localStorage.setItem('localCache', JSON.stringify(searchHistory));
+          var searchResults = searchHistory[searchTerm].items;
           // clear out all list items in ul
           $('#results').empty();
           // if the search term doesnt return any results
           if (searchResults.length === 0) {
-            $('#results').append("<li> does not match any repositories </li>")
+            $('#results').append("<li> does not match any repositories </li>");
           } else {
             for (var i = 0; i < searchResults.length; i ++) {
               $('#results').append(
-                "<li class='result'> <h1> Name:"+searchResults[i].name+" Owner:"+searchResults[i].owner+"</h1>"
+                "<li class='result'> <h1> Name:"+searchResults[i].name+" Owner:"+searchResults[i].owner.login+"</h1>"
                 +"<h2>"+searchResults[i].description+" "+searchResults[i].url+"</h2> </li>"
-                )
+              );
             }
           }
         },
         error: function(result){
-          $("#div1").html('does not exist')
+          $("#div1").html('does not exist');
         }
       });
    }
-  })
-  // making sure click elements are applied to appended elements
+  });
 
+  // making sure click functions are applied to appended list elements
   $(document).on('click', 'li', function(){ 
-    $(this).children('h2').css('display','block')
+    $(this).children('h2').css('display','block');
   }); 
 
 });
