@@ -1,1 +1,7 @@
 /* normalize.css has been included before this file */
+li {
+	z-index: 1;
+}
+h2 {
+	display: none;
+}

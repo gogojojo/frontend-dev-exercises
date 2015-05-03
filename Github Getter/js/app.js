@@ -58,7 +58,10 @@ $(function(){
             $('#results').append("<li> does not match any repositories </li>")
           } else {
             for (var i = 0; i < searchResults.length; i ++) {
-              $('#results').append("<li>"+searchResults[i].name+" "+searchResults[i].owner+"</li>")
+              $('#results').append(
+                "<li class='result'> <h1> Name:"+searchResults[i].name+" Owner:"+searchResults[i].owner+"</h1>"
+                +"<h2>"+searchResults[i].description+" "+searchResults[i].url+"</h2> </li>"
+                )
             }
           }
         },
@@ -68,4 +71,10 @@ $(function(){
       });
    }
   })
+  // making sure click elements are applied to appended elements
+
+  $(document).on('click', 'li', function(){ 
+    $(this).children('h2').css('display','block')
+  }); 
+
 });
