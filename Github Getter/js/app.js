@@ -84,11 +84,9 @@
           'left':'0'
           });
         clicked = false;
-        console.log(clicked)
       } else {
         $('.description').css('left','-2000px');
         clicked = true;
-        console.log(clicked)
       }
     }); 
 
