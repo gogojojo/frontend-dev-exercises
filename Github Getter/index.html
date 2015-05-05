@@ -16,17 +16,21 @@
 <body>
 
   <div id="results-container">
-
-    <h1> Results </h1>
+    <nav>
+      <h1> Results </h1>
+      <div id='search-nav'>
+        <input id="search" placeholder ='Search Again' type="text"/> 
+        <input id='submit' type='submit'/> 
+      </div>
+    </nav>
     <div id='error'></div>
-    <ul id='results'>
-      
-    </ul>
+    <ul id='results'></ul>
   </div>
+  
   <div id="overlay-container">
     <div id='landing-container'>
       <h1> Github Getter </h1>
-      <p> Search github repositories by keyword </p> 
+      <p> Search github repos by keyword </p> 
       <input id="search-overlay" type="text"/> <br>
       <input id='submit-overlay' type='submit'/>
     </div>

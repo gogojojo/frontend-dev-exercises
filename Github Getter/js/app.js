@@ -1,6 +1,7 @@
 // note: not using legacy seach because github api suggests using un depreciated version
-var searchHistory = {};
+
 (function () {
+  var searchHistory = {};
 
   $(function(){
 
@@ -22,14 +23,17 @@ var searchHistory = {};
 
     // function for searching github
     function searchGithub(search) {
+      // empty out dom elements
+      $("#error").empty();
+      $('#results').empty();
       //if the search term has already been searched for then no need for ajax call
       if (Object.keys(searchHistory).indexOf(search) != -1) {
         // running the function that shows search results
         createlist(search);
       } else {
         $.ajax({
-          // Returning the top 25 repositories based on stars
-          url: "https://api.github.com/search/repositories?q="+search+"&sort=stars&per_page=25",
+          // Returning the top 30 repositories based on stars
+          url: "https://api.github.com/search/repositories?q="+search+"&sort=stars&per_page=30",
           success: function(result){
             searchHistory[search] = result;
             // storing search history object into local storage
@@ -38,7 +42,7 @@ var searchHistory = {};
             createlist(search);
           },
           error: function(result){
-            $("#div1").html('does not exist');
+            $("#error").html('invalid search, try again');
           }
         });
      }
@@ -48,22 +52,21 @@ var searchHistory = {};
     function createlist(searchTerm) {
       var searchResults = searchHistory[searchTerm].items;
 
-      $('#results').empty();
       // if the search term doesnt return any results
       if (searchResults.length === 0) {
-          $('#results').append("<li> does not match any repositories </li>");
+          $("#error").html('no repositories found');
       } else {
         for (var i = 0; i < searchResults.length; i ++) {
 
           $('#results').append(
-            "<li class='result'><div class='primary-result'> Name:"+searchResults[i].name+" Owner:"+searchResults[i].owner.login+" </div>"
-              +"<div class='description'> <div>"
-                +"<h2> Repository Name:"+searchResults[i].name+"</h2>" 
-                +"<h2> Repository Owner:"+searchResults[i].owner.login+"</h2>" 
+            "<li class='result'><div class='primary-result'><strong> Repo:</strong> "+searchResults[i].name+"  <strong>Owner:</strong> "+searchResults[i].owner.login+" </div>"
+              +"<div class='description'> <div class='description-container'>"
+                +"<h2> Repo Name: "+searchResults[i].name+"</h2>" 
+                +"<h2> Repo Owner: "+searchResults[i].owner.login+"</h2>" 
                 +"<a href='"+searchResults[i].html_url+"' target='_blank'>Link to Repository</a>"
                 +"<h3> Language: "+searchResults[i].language+"</h3>"
                 +"<h3> Follower count: "+searchResults[i].watchers+"</h3>"
-                +"<p> <strong> Description </strong> <br>"+searchResults[i].description+"</p> </div> </div> </li>"
+                +"<p> <strong> Description </strong> <br>"+searchResults[i].description+"</p> <div id='close'> X </div> </div> </div> </li>"
           );
 
         }
