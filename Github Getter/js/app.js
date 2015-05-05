@@ -2,54 +2,47 @@
 var searchHistory = {};
 (function () {
 
-
   $(function(){
+
     // do not retreive data if this is your first search 
-    // local storage is used for caching
-    if (localStorage.getItem('localCache') !== null ) {
-      searchHistory = localStorage.getItem('localCache');
+    // session storage is used for caching
+    if (sessionStorage.getItem('sessionCache') !== null ) {
+      searchHistory = sessionStorage.getItem('sessionCache');
       searchHistory = JSON.parse(searchHistory);
     }
-    $('#searchsub').click(function(){
+    // search inputs for both the overlay and the standard
+    $('#submit-overlay').click(function(){
+      var searchTerm = $('#search-overlay').val();
+      searchGithub(searchTerm);
+    });
+    $('#submit').click(function(){
       var searchTerm = $('#search').val();
+      searchGithub(searchTerm);
+    });
+
+    // function for searching github
+    function searchGithub(search) {
       //if the search term has already been searched for then no need for ajax call
-      if (Object.keys(searchHistory).indexOf(searchTerm) != -1) {
+      if (Object.keys(searchHistory).indexOf(search) != -1) {
         // running the function that shows search results
-        createlist(searchTerm);
+        createlist(search);
       } else {
         $.ajax({
           // Returning the top 25 repositories based on stars
-          url: "https://api.github.com/search/repositories?q="+searchTerm+"&sort=stars&per_page=25",
+          url: "https://api.github.com/search/repositories?q="+search+"&sort=stars&per_page=25",
           success: function(result){
-            searchHistory[searchTerm] = result;
+            searchHistory[search] = result;
             // storing search history object into local storage
-            localStorage.setItem('localCache', JSON.stringify(searchHistory));
+            sessionStorage.setItem('localCache', JSON.stringify(searchHistory));
             // running the function that shows search results
-            createlist(searchTerm);
+            createlist(search);
           },
           error: function(result){
             $("#div1").html('does not exist');
           }
         });
      }
-    });
-
-    // making sure click actions are applied to appended list elements
-    var clicked = true
-    $(document).on('click', 'li', function(){ 
-      if (clicked === true) {
-        $(this).children('.description').css({
-          'left':'0'
-          });
-        clicked = false;
-        console.log(clicked)
-      } else {
-        $('.description').css('left','-2000px');
-        clicked = true;
-        console.log(clicked)
-      }
-    }); 
-
+    }
 
     // function for creating the list of search returns
     function createlist(searchTerm) {
@@ -78,6 +71,29 @@ var searchHistory = {};
       }
 
     };
+    // jQUERY CSS CHANGES
+
+    // making sure click actions are applied to appended list elements
+    var clicked = true
+    $(document).on('click', 'li', function(){ 
+      if (clicked === true) {
+        $(this).children('.description').css({
+          'left':'0'
+          });
+        clicked = false;
+        console.log(clicked)
+      } else {
+        $('.description').css('left','-2000px');
+        clicked = true;
+        console.log(clicked)
+      }
+    }); 
+
+    $('#submit-overlay').click(function(){
+      $('#overlay-container').css({
+        'display':'none',
+      })
+    })
 
 
   });

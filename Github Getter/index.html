@@ -14,18 +14,21 @@
   <script src="js/app.js"></script>
 </head>
 <body>
-  <input id="search" type="text"/>
-  <input id ='searchsub' type='submit'/>
+
   <div id="results-container">
-    <div id='div1'></div>
+
+    <h1> Results </h1>
+    <div id='error'></div>
     <ul id='results'>
       
     </ul>
   </div>
   <div id="overlay-container">
-    <div>
+    <div id='landing-container'>
       <h1> Github Getter </h1>
-      <p> Search github repositories by </p> 
+      <p> Search github repositories by keyword </p> 
+      <input id="search-overlay" type="text"/> <br>
+      <input id='submit-overlay' type='submit'/>
     </div>
   </div>
 </body>
